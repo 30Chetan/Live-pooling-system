@@ -219,86 +219,124 @@ const TeacherPage: React.FC = () => {
         }
 
         return (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div className="badge-pill">
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className="badge-pill" style={{ alignSelf: 'flex-start', marginBottom: '32px' }}>
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" /></svg>
                     Intervue Poll
                 </div>
-                <h1 style={{ fontSize: '36px', color: '#000000', marginBottom: '12px', fontWeight: 700, letterSpacing: '-0.02em', textAlign: 'center' }}>
-                    Create a Poll
+                <h1 style={{ fontSize: '36px', color: '#000000', marginBottom: '8px', letterSpacing: '-0.02em', fontWeight: 500 }}>
+                    Let's <span style={{ fontWeight: 700 }}>Get Started</span>
                 </h1>
-                <p className="subtitle" style={{ textAlign: 'center', marginBottom: '40px' }}>
-                    Enter your question and options to start.
+                <p style={{ color: '#94A3B8', fontSize: '15px', lineHeight: '1.5', fontWeight: 500, marginBottom: '48px', maxWidth: '600px' }}>
+                    you'll have the ability to create and manage polls, ask questions, and monitor<br />your students' responses in real-time.
                 </p>
-                <form onSubmit={handleCreatePoll} style={{ width: '100%', maxWidth: '400px', margin: '0 auto', textAlign: 'left' }}>
-                    <div className="input-group" style={{ marginBottom: '24px' }}>
-                        <label htmlFor="pollQuestion">Poll Question</label>
-                        <input
-                            id="pollQuestion"
-                            type="text"
-                            className="form-control"
-                            style={{ padding: '14px 18px', fontSize: '16px' }}
+
+                <form onSubmit={handleCreatePoll} style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+
+                    {/* Header for text area */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <label style={{ fontSize: '18px', fontWeight: 700, color: '#000000' }}>Enter your question</label>
+                        <div style={{ position: 'relative' }}>
+                            <select
+                                style={{ padding: '8px 32px 8px 16px', background: '#F1F5F9', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: 500, color: '#373737', outline: 'none', appearance: 'none', cursor: 'pointer' }}
+                                value={duration}
+                                onChange={(e) => setDuration(parseInt(e.target.value))}
+                            >
+                                <option value={10}>10 seconds</option>
+                                <option value={30}>30 seconds</option>
+                                <option value={60}>60 seconds</option>
+                                <option value={90}>90 seconds</option>
+                            </select>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#5767D0' }}>
+                                <path d="M7 10l5 5 5-5z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div style={{ position: 'relative', marginBottom: '40px' }}>
+                        <textarea
+                            style={{ width: '100%', height: '140px', background: '#F3F4F6', border: 'none', borderRadius: '4px', padding: '24px', fontSize: '16px', color: '#373737', resize: 'none', outline: 'none' }}
                             value={question}
                             onChange={(e) => setQuestion(e.target.value)}
-                            placeholder="e.g. Which planet is known as the Red Planet?"
+                            placeholder="Rahul Bajaj"
+                            maxLength={100}
                             required
                         />
+                        <span style={{ position: 'absolute', bottom: '16px', right: '16px', fontSize: '12px', color: '#000000', fontWeight: 600 }}>{question.length}/100</span>
                     </div>
-                    <div className="input-group" style={{ marginBottom: '24px' }}>
-                        <label>Options</label>
+
+                    <div style={{ display: 'flex', marginBottom: '16px' }}>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ fontSize: '15px', fontWeight: 700, color: '#000000' }}>Edit Options</label>
+                        </div>
+                        <div style={{ width: '180px' }}>
+                            <label style={{ fontSize: '15px', fontWeight: 700, color: '#000000' }}>Is it Correct?</label>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
                         {options.map((opt, i) => (
-                            <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    style={{ padding: '14px 18px', fontSize: '16px', flex: 1 }}
-                                    value={opt}
-                                    onChange={(e) => handleOptionChange(i, e.target.value)}
-                                    placeholder={`Option ${i + 1}`}
-                                    required
-                                />
-                                {options.length > 2 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setOptions(options.filter((_, idx) => idx !== i))}
-                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', display: 'flex', padding: '8px' }}
-                                    >
+                            <div key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#6D67E4', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 600, flexShrink: 0 }}>
+                                        {i + 1}
+                                    </div>
+                                    <input
+                                        type="text"
+                                        style={{ flex: 1, background: '#F3F4F6', border: 'none', padding: '16px 20px', borderRadius: '4px', fontSize: '15px', color: '#373737', outline: 'none' }}
+                                        value={opt}
+                                        onChange={(e) => handleOptionChange(i, e.target.value)}
+                                        placeholder="Rahul Bajaj"
+                                        required
+                                    />
+                                </div>
+                                <div style={{ width: '180px', display: 'flex', alignItems: 'center', gap: '24px', paddingLeft: '24px' }}>
+                                    {/* Yes Radio visually */}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: i === 0 ? '5px solid #6D67E4' : '1px solid #D1D5DB', background: i === 0 ? 'white' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
+                                        </div>
+                                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#000000' }}>Yes</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: i !== 0 ? '5px solid #6D67E4' : '1px solid #D1D5DB', background: i !== 0 ? 'white' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
+                                        </div>
+                                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#000000' }}>No</span>
+                                    </div>
+                                </div>
+                                {options.length > 2 ? (
+                                    <button type="button" onClick={() => setOptions(options.filter((_, idx) => idx !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', display: 'flex', padding: '8px', marginLeft: '8px' }}>
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
                                     </button>
+                                ) : (
+                                    <div style={{ width: '36px', marginLeft: '8px' }}></div>
                                 )}
                             </div>
                         ))}
+                    </div>
+
+                    <div>
                         <button
                             type="button"
-                            style={{ background: 'transparent', border: 'none', color: '#5767D0', fontWeight: 600, fontSize: '14px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 0', marginTop: '4px' }}
+                            style={{ background: 'transparent', border: '1px solid #A5B4FC', color: '#6D67E4', fontWeight: 600, fontSize: '14px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', padding: '10px 20px', borderRadius: '8px' }}
                             onClick={() => setOptions([...options, ''])}
                         >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                            Add Option
+                            + Add More option
                         </button>
                     </div>
-                    <div className="input-group" style={{ marginBottom: '40px' }}>
-                        <label htmlFor="pollDuration">Duration (s)</label>
-                        <input
-                            id="pollDuration"
-                            type="number"
-                            className="form-control"
-                            style={{ padding: '14px 18px', fontSize: '16px' }}
-                            value={duration}
-                            onChange={(e) => setDuration(parseInt(e.target.value))}
-                            min="10"
-                            required
-                        />
+
+                    {/* Fixed Footer */}
+                    <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', background: 'white', borderTop: '1px solid #E2E8F0', padding: '20px 40px', display: 'flex', justifyContent: 'flex-end', zIndex: 10 }}>
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
+                            disabled={loading || !isConnected}
+                            style={{ padding: '14px 40px', borderRadius: '32px', opacity: (loading || !isConnected) ? 0.6 : 1, cursor: (loading || !isConnected) ? 'not-allowed' : 'pointer', fontWeight: 600, fontSize: '15px' }}
+                        >
+                            {loading ? 'Creating...' : 'Ask Question'}
+                        </button>
                     </div>
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={loading || !isConnected}
-                        style={{ width: '100%', padding: '14px', borderRadius: '12px', opacity: (loading || !isConnected) ? 0.6 : 1, cursor: (loading || !isConnected) ? 'not-allowed' : 'pointer', fontWeight: 600 }}
-                    >
-                        {loading ? 'Creating...' : isConnected ? 'Ask Question' : 'Connecting...'}
-                    </button>
                 </form>
+                <div style={{ height: '80px' }}></div>
             </div>
         );
     };
@@ -345,7 +383,7 @@ const TeacherPage: React.FC = () => {
                 </div>
             )}
 
-            <div className={`card-wrapper ${isHistoryView ? 'history-mode' : ''}`} style={{ width: '100%', maxWidth: isHistoryView ? '800px' : '480px', marginTop: isHistoryView ? '60px' : '0' }}>
+            <div className={`card-wrapper ${isHistoryView ? 'history-mode' : ''}`} style={{ width: '100%', maxWidth: isHistoryView ? '800px' : (!poll ? '800px' : '480px'), marginTop: isHistoryView ? '60px' : '0' }}>
                 {isHistoryView ? (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
                         <PollHistorySection polls={allPolls} />
