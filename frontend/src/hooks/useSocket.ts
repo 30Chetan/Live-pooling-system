@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { usePoll } from '../context/PollContext';
 import { IPoll } from '../types/poll';
@@ -7,12 +7,18 @@ let socket: Socket;
 
 export const useSocket = () => {
     const { setPoll, setRemainingTime } = usePoll();
+    const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
         socket = io('http://localhost:5002');
 
         socket.on('connect', () => {
+            setIsConnected(true);
             socket.emit('student:join');
+        });
+
+        socket.on('disconnect', () => {
+            setIsConnected(false);
         });
 
         socket.on('poll:state', (data: { poll: IPoll; remainingTime: number }) => {
@@ -44,10 +50,10 @@ export const useSocket = () => {
     }, [setPoll, setRemainingTime]);
 
     const emit = (event: string, data?: any) => {
-        if (socket) {
+        if (socket && isConnected) {
             socket.emit(event, data);
         }
     };
 
-    return { emit };
+    return { socket, emit, isConnected };
 };
