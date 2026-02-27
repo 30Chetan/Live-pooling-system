@@ -12,12 +12,28 @@ const calculateRemainingTime = (poll: IPoll): number => {
 
 export const initializePollSocket = (io: Server) => {
     const LIVE_ROOM = 'live_poll';
+    const participants = new Map<string, { socketId: string; name: string; role: string }>();
 
     io.on('connection', (socket: Socket) => {
         console.log(`User connected: ${socket.id}`);
 
         // Automatically join the live room
         socket.join(LIVE_ROOM);
+
+        socket.on('user:join', (data: { name: string; role: string }) => {
+            participants.set(socket.id, { socketId: socket.id, name: data.name, role: data.role });
+            io.to(LIVE_ROOM).emit('participants:update', Array.from(participants.values()));
+        });
+
+        socket.on('teacher:kick', (socketIdToKick: string) => {
+            io.to(socketIdToKick).emit('kicked');
+            participants.delete(socketIdToKick);
+            const s = io.sockets.sockets.get(socketIdToKick);
+            if (s) {
+                s.leave(LIVE_ROOM);
+            }
+            io.to(LIVE_ROOM).emit('participants:update', Array.from(participants.values()));
+        });
 
         // A) "student:join"
         socket.on('student:join', async () => {
@@ -71,8 +87,18 @@ export const initializePollSocket = (io: Server) => {
             }
         });
 
+        // Chat functionality
+        socket.on('chat:send', (data: { sender: string; text: string; timestamp: string }) => {
+            io.to(LIVE_ROOM).emit('chat:message', data);
+        });
+
+
         socket.on('disconnect', () => {
             console.log(`User disconnected: ${socket.id}`);
+            if (participants.has(socket.id)) {
+                participants.delete(socket.id);
+                io.to(LIVE_ROOM).emit('participants:update', Array.from(participants.values()));
+            }
         });
     });
 };
