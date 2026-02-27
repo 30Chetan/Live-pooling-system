@@ -22,6 +22,7 @@ const TeacherPage: React.FC = () => {
     const [allPolls, setAllPolls] = useState<IPoll[]>([]);
     const [toast, setToast] = useState<{ message: string; type: 'error' | 'success' | 'info' } | null>(null);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isHistoryView, setIsHistoryView] = useState(false);
 
     // Register as Teacher on connect
     useEffect(() => {
@@ -316,9 +317,63 @@ const TeacherPage: React.FC = () => {
 
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            <div className="card-wrapper" style={{ width: '100%', maxWidth: '480px' }}>
-                {renderContent()}
-                <PollHistorySection polls={allPolls} />
+            {!isHistoryView && (
+                <div style={{ position: 'absolute', top: '24px', right: '24px', zIndex: 100 }}>
+                    <button
+                        onClick={() => setIsHistoryView(true)}
+                        style={{
+                            background: '#917FFA',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 20px',
+                            borderRadius: '32px',
+                            fontWeight: 600,
+                            fontSize: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 14px rgba(109, 103, 228, 0.2)'
+                        }}
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        View Poll history
+                    </button>
+                </div>
+            )}
+
+            <div className={`card-wrapper ${isHistoryView ? 'history-mode' : ''}`} style={{ width: '100%', maxWidth: isHistoryView ? '800px' : '480px', marginTop: isHistoryView ? '60px' : '0' }}>
+                {isHistoryView ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
+                        <PollHistorySection polls={allPolls} />
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', marginTop: '24px' }}>
+                            <button
+                                onClick={() => setIsHistoryView(false)}
+                                style={{
+                                    background: '#6D67E4',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '12px 24px',
+                                    borderRadius: '32px',
+                                    fontWeight: 600,
+                                    fontSize: '15px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                + Ask a new question
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    renderContent()
+                )}
             </div>
 
             <div className="chat-floating" onClick={() => setIsChatOpen(true)} style={{ display: isChatOpen ? 'none' : 'flex' }}>
