@@ -332,12 +332,12 @@ const TeacherPage: React.FC = () => {
                     </div>
 
                     {/* Fixed Footer */}
-                    <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', background: 'white', borderTop: '1px solid #E2E8F0', padding: '20px 40px', display: 'flex', justifyContent: 'flex-end', zIndex: 10 }}>
+                    <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', background: 'white', borderTop: '1px solid #E2E8F0', padding: '16px 24px', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
                         <button
                             type="submit"
                             className="btn btn-primary"
                             disabled={loading || !isConnected}
-                            style={{ padding: '14px 40px', borderRadius: '32px', opacity: (loading || !isConnected) ? 0.6 : 1, cursor: (loading || !isConnected) ? 'not-allowed' : 'pointer', fontWeight: 600, fontSize: '15px' }}
+                            style={{ width: '100%', maxWidth: '800px', padding: '16px', borderRadius: '32px', opacity: (loading || !isConnected) ? 0.6 : 1, cursor: (loading || !isConnected) ? 'not-allowed' : 'pointer', fontWeight: 600, fontSize: '16px' }}
                         >
                             {loading ? 'Creating...' : 'Ask Question'}
                         </button>
