@@ -67,7 +67,178 @@ const StudentPage: React.FC = () => {
     };
 
     const getTotalVotes = () => poll?.options?.reduce((sum, opt) => sum + opt.votes, 0) || 0;
-    const isPollEnded = !poll || poll.status === 'completed' || Math.ceil(timerRemaining) <= 0;
+
+    const renderJoinedContent = () => {
+        if (!poll) {
+            return (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '40px 0' }}>
+                    <div className="loading-spinner"></div>
+                    <h1 style={{ fontSize: '32px', color: '#000000', margin: 0, fontWeight: 700 }}>
+                        Wait for the teacher to ask a new question..
+                    </h1>
+                </div>
+            );
+        }
+
+        const isEnded = poll.status === 'completed' || Math.ceil(timerRemaining) <= 0;
+        const displayTime = Math.ceil(timerRemaining);
+        const totalVotes = getTotalVotes();
+        const myVote = poll.voters?.find(v => v.studentId === studentId)?.optionIndex;
+
+        if (!hasVoted && !isEnded && poll.status === 'active') {
+            return (
+                <div className="card">
+                    <div className="timer-badge">
+                        <span>⏱️</span>
+                        <span>{displayTime}s remaining</span>
+                    </div>
+                    <h2 className="poll-question">{poll.question}</h2>
+                    <div style={{ marginBottom: '12px', textAlign: 'right', fontSize: '14px', color: '#64748B' }}>Total Votes: {totalVotes}</div>
+                    <div className="poll-options">
+                        {poll?.options?.map((option, index) => (
+                            <button
+                                key={index}
+                                className="option-btn"
+                                disabled={!isConnected}
+                                onClick={() => handleVote(index)}
+                            >
+                                <div className="option-content">
+                                    <span className="option-text">{option.text}</span>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div style={{ width: '100%', maxWidth: '640px', margin: '40px auto 0', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '16px' }}>
+                    <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0, color: '#000000' }}>Question 1</h2>
+                    {!isEnded && (
+                        <div style={{ color: '#D93025', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            {String(Math.floor(displayTime / 60)).padStart(2, '0')}:{String(displayTime % 60).padStart(2, '0')}
+                        </div>
+                    )}
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {/* Dark Header */}
+                    <div style={{
+                        background: '#5E5E5E',
+                        padding: '16px 20px',
+                        borderTopLeftRadius: '8px',
+                        borderTopRightRadius: '8px',
+                        color: '#FFFFFF',
+                        fontWeight: 600,
+                        fontSize: '16px'
+                    }}>
+                        {poll.question}
+                    </div>
+
+                    {/* Body */}
+                    <div style={{
+                        background: '#FFFFFF',
+                        borderLeft: '1px solid #D1D5DB',
+                        borderRight: '1px solid #D1D5DB',
+                        borderBottom: '1px solid #D1D5DB',
+                        borderBottomLeftRadius: '8px',
+                        borderBottomRightRadius: '8px',
+                        padding: '16px 20px'
+                    }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {poll.options.map((option, idx) => {
+                                const percentage = totalVotes > 0 ? (option.votes / totalVotes) * 100 : 0;
+                                const isHighPercentage = percentage >= 15;
+                                const isSelected = myVote === idx;
+
+                                return (
+                                    <div key={idx} style={{
+                                        position: 'relative',
+                                        border: isSelected ? '2px solid #0084FF' : '1px solid #E5E7EB',
+                                        borderRadius: '6px',
+                                        overflow: 'hidden',
+                                        background: '#F9FAFB',
+                                        height: '48px',
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }}>
+                                        {/* Purple Progress Fill */}
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            height: '100%',
+                                            width: `${Math.max(percentage, 5)}%`,
+                                            background: '#6D67E4',
+                                            zIndex: 1,
+                                            transition: 'width 0.5s ease'
+                                        }}></div>
+
+                                        {/* Content Overlay */}
+                                        <div style={{
+                                            position: 'relative',
+                                            zIndex: 2,
+                                            width: '100%',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: '0 16px'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                {/* Number Badge */}
+                                                <div style={{
+                                                    width: '24px',
+                                                    height: '24px',
+                                                    borderRadius: '50%',
+                                                    background: '#FFFFFF',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '12px',
+                                                    fontWeight: 600,
+                                                    color: '#6D67E4'
+                                                }}>
+                                                    {idx + 1}
+                                                </div>
+                                                {/* Option Text */}
+                                                <span style={{
+                                                    fontSize: '14px',
+                                                    fontWeight: 500,
+                                                    color: isHighPercentage ? '#FFFFFF' : '#373737'
+                                                }}>
+                                                    {option.text}
+                                                </span>
+                                            </div>
+
+                                            {/* Percentage Text */}
+                                            <span style={{
+                                                fontSize: '14px',
+                                                fontWeight: 600,
+                                                color: '#000000',
+                                                border: isSelected ? '1px dashed #0084FF' : 'none',
+                                                padding: isSelected ? '2px 4px' : '0'
+                                            }}>
+                                                {Math.round(percentage)}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ marginTop: '40px', textAlign: 'center' }}>
+                    <p style={{ fontSize: '18px', fontWeight: 600, color: '#000000' }}>
+                        Wait for the teacher to ask a new question..
+                    </p>
+                </div>
+            </div>
+        );
+    };
 
     if (isKicked) {
         return (
@@ -136,90 +307,8 @@ const StudentPage: React.FC = () => {
                         </button>
                     </form>
                 </div>
-            ) : isPollEnded ? (
-                <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div className="badge-pill">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" /></svg>
-                        Intervue Poll
-                    </div>
-
-                    {poll ? (
-                        <>
-                            <h1 style={{ fontSize: '36px', color: '#000000', marginBottom: '12px', fontWeight: 700, letterSpacing: '-0.02em', textAlign: 'center' }}>
-                                Final Results
-                            </h1>
-                            <p className="subtitle" style={{ textAlign: 'center', marginBottom: '40px' }}>
-                                Here is how everyone answered this question.
-                            </p>
-
-                            <div className="poll-results" style={{ width: '100%', textAlign: 'left' }}>
-                                <h2 className="poll-question" style={{ fontSize: '24px', fontWeight: 600, color: '#373737' }}>{poll.question}</h2>
-                                <div style={{ marginBottom: '24px', textAlign: 'right', fontSize: '14px', color: '#64748B' }}>
-                                    Total Votes: {getTotalVotes()}
-                                </div>
-                                <div className="poll-options">
-                                    {poll.options.map((option, index) => {
-                                        const total = getTotalVotes();
-                                        const percentage = total > 0 ? (option.votes / total) * 100 : 0;
-                                        return (
-                                            <div key={index} className="option-btn" style={{ cursor: 'default', background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '16px', borderRadius: '12px', marginBottom: '12px', position: 'relative', overflow: 'hidden' }}>
-                                                <div className="progress-bg" style={{ width: `${percentage}%`, position: 'absolute', top: 0, left: 0, height: '100%', background: '#8C99E0', opacity: 0.2, zIndex: 1 }}></div>
-                                                <div className="option-content" style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <span className="option-text" style={{ fontWeight: 600, fontSize: '16px', color: '#373737' }}>{option.text}</span>
-                                                    <span className="option-votes" style={{ fontWeight: 700, color: '#5767D0', fontSize: '16px' }}>{percentage.toFixed(0)}%</span>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                            <button
-                                className="btn btn-primary"
-                                style={{ marginTop: '32px', width: '100%', padding: '14px', borderRadius: '12px' }}
-                                onClick={() => setIsJoined(false)}
-                            >
-                                Leave Room
-                            </button>
-                        </>
-                    ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '40px 0' }}>
-                            <div className="loading-spinner"></div>
-                            <h1 style={{ fontSize: '32px', color: '#000000', margin: 0, fontWeight: 700 }}>
-                                Wait for the teacher to ask questions..
-                            </h1>
-                        </div>
-                    )}
-                </div>
             ) : (
-                <div className="card">
-                    <div className="timer-badge">
-                        <span>⏱️</span>
-                        <span>{Math.ceil(timerRemaining)}s remaining</span>
-                    </div>
-                    <h2 className="poll-question">{poll.question}</h2>
-                    <div style={{ marginBottom: '12px', textAlign: 'right', fontSize: '14px', color: '#64748B' }}>Total Votes: {getTotalVotes()}</div>
-                    <div className="poll-options">
-                        {poll?.options?.map((option, index) => {
-                            const total = getTotalVotes();
-                            const percentage = total > 0 ? (option.votes / total) * 100 : 0;
-                            return (
-                                <button
-                                    key={index}
-                                    className="option-btn"
-                                    disabled={hasVoted || !isConnected}
-                                    onClick={() => handleVote(index)}
-                                >
-                                    {hasVoted && <div className="progress-bg" style={{ width: `${percentage}%` }}></div>}
-                                    <div className="option-content">
-                                        <span className="option-text">{option.text}</span>
-                                        {hasVoted && <span className="option-votes">{option.votes} votes</span>}
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </div>
-                    {hasVoted && <div className="voted-badge">✅ Your vote has been recorded!</div>}
-                </div>
+                renderJoinedContent()
             )}
 
             {isJoined && (
