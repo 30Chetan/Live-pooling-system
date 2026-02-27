@@ -17,6 +17,7 @@ const TeacherPage: React.FC = () => {
     // Form State
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState(['', '']);
+    const [correctOptionIndex, setCorrectOptionIndex] = useState(0);
     const [duration, setDuration] = useState(60);
     const [loading, setLoading] = useState(false);
     const [allPolls, setAllPolls] = useState<IPoll[]>([]);
@@ -220,8 +221,8 @@ const TeacherPage: React.FC = () => {
 
         return (
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div className="badge-pill" style={{ alignSelf: 'flex-start', marginBottom: '32px' }}>
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" /></svg>
+                <div style={{ alignSelf: 'flex-start', marginBottom: '32px', background: '#6D67E4', color: 'white', padding: '6px 12px', borderRadius: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" /></svg>
                     Intervue Poll
                 </div>
                 <h1 style={{ fontSize: '36px', color: '#000000', marginBottom: '8px', letterSpacing: '-0.02em', fontWeight: 500 }}>
@@ -292,13 +293,19 @@ const TeacherPage: React.FC = () => {
                                 </div>
                                 <div style={{ width: '180px', display: 'flex', alignItems: 'center', gap: '24px', paddingLeft: '24px' }}>
                                     {/* Yes Radio visually */}
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: i === 0 ? '5px solid #6D67E4' : '1px solid #D1D5DB', background: i === 0 ? 'white' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
+                                    <div
+                                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                                        onClick={() => setCorrectOptionIndex(i)}
+                                    >
+                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: correctOptionIndex === i ? '5px solid #6D67E4' : '1px solid #D1D5DB', background: correctOptionIndex === i ? 'white' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
                                         </div>
                                         <span style={{ fontSize: '14px', fontWeight: 700, color: '#000000' }}>Yes</span>
                                     </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: i !== 0 ? '5px solid #6D67E4' : '1px solid #D1D5DB', background: i !== 0 ? 'white' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
+                                    <div
+                                        style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+                                        onClick={() => { if (correctOptionIndex === i) { setCorrectOptionIndex(i === 0 ? 1 : 0); } }}
+                                    >
+                                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: correctOptionIndex !== i ? '5px solid #6D67E4' : '1px solid #D1D5DB', background: correctOptionIndex !== i ? 'white' : '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
                                         </div>
                                         <span style={{ fontSize: '14px', fontWeight: 700, color: '#000000' }}>No</span>
                                     </div>
