@@ -5,7 +5,7 @@ export interface IOption {
 
 export interface IVoter {
     studentId: string;
-    selectedOptionIndex: number;
+    optionIndex: number;
 }
 
 export interface IPoll {
