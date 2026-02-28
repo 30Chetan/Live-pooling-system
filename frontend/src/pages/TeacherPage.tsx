@@ -41,7 +41,7 @@ const TeacherPage: React.FC = () => {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await fetch('http://localhost:5002/api/polls');
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/polls`);
                 if (!response.ok) throw new Error('Could not load history');
                 const list = await response.json();
                 setAllPolls(list);
@@ -80,7 +80,7 @@ const TeacherPage: React.FC = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:5002/api/polls', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/polls`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ question, options: filtered, duration })
@@ -95,7 +95,7 @@ const TeacherPage: React.FC = () => {
             setToast({ message: 'Poll created successfully!', type: 'success' });
 
             // Refresh history
-            const res2 = await fetch('http://localhost:5002/api/polls');
+            const res2 = await fetch(`${import.meta.env.VITE_API_URL}/api/polls`);
             if (res2.ok) setAllPolls(await res2.json());
         } catch (err: any) {
             setToast({ message: err.message || 'Connection error', type: 'error' });

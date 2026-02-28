@@ -7,7 +7,7 @@ export const usePollRecovery = () => {
 
     const recoverPoll = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:5002/api/polls');
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/polls`);
             const data = await response.json();
 
             // Find active poll

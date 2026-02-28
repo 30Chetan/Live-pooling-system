@@ -13,7 +13,9 @@ export const useSocket = () => {
 
     useEffect(() => {
         if (!socket) {
-            socket = io('http://localhost:5002');
+            socket = io(import.meta.env.VITE_API_URL, {
+                transports: ['websocket'],
+            });
         }
 
         const onConnect = () => {
