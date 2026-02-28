@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5002;
 
 const startServer = async () => {
     try {
